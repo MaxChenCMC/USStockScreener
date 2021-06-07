@@ -9,8 +9,9 @@ import matplotlib.pyplot as plt
 # Emoji按"Win"鍵加";" 亦可指定png檔／layout可centered
 st.set_page_config(page_icon = '💯', page_title = 'Max選股', layout = 'wide', initial_sidebar_state = 'auto')
 st.markdown("""<style>.main{background-color:#EFE3D8}</style>""", unsafe_allow_html = True)
-st.write('右上角 ≡ ☛ settings ☛ Theme 選 Light體驗較佳')
+
 choice = st.sidebar.selectbox('Menu', options = ['Home', 'US Stock', 'TW Stock', 'How To Learn'], index = 0)
+st.sidebar.write('右上角 ≡ ☛ settings ☛ Theme 選 Light 體驗較佳')
 
 if choice == 'Home':
     import page1
