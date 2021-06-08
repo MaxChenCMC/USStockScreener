@@ -30,20 +30,32 @@ def active():
     st.markdown("""
     # 近期市場關注標的
     #### 資料來源：[HiStock 嗨投資](https://histock.tw/stock/rank.aspx?p=all)
-    #### 篩選條件： `價格 ＜ 100`／`振幅 ＞ 5％`／`成交量 ＞ 2000張`／`成交值 ＞ 15億`
+    #### 依成交值排序
     ####
     """)
-    show = st.button('我瞧瞧！')
-    if show:
-        vola = pd.read_html('https://histock.tw/stock/rank.aspx?p=all')[0]
-        cond1 = vola['代號▼'].apply(lambda x: len(x) == 4)
-        cond2 = vola['振幅▼'].apply(lambda x: float(x[:-1]) > 5.0)
-        vola_rank = vola[(vola['成交值(億)▼'] > 15) & (vola['成交量▼'] > 2000) & (vola['價格▼'] < 100) & cond1 & cond2]
-        vola_rank[['漲跌▼','漲跌幅▼']] = vola_rank[['漲跌▼','漲跌幅▼']].replace('--','0.00%')
-        vola_rank['漲跌幅%'] = vola_rank['漲跌幅▼'].apply(lambda x: float(x[:-1]))
-        vola_rank.drop(['周漲跌▼','開盤▼','最高▼','最低▼','昨收▼','漲跌幅▼'],axis = 1, inplace = True)
-        vola_rank.set_index('代號▼', inplace = True)
-        st.table(vola_rank.sort_values('漲跌幅%', ascending = False))
+    df = pd.read_html('https://histock.tw/stock/rank.aspx?p=all')[0]
+    df.drop(['漲跌▼','周漲跌▼','開盤▼','最高▼','最低▼','昨收▼'],axis = 1, inplace = True)
+    df = df[df['代號▼'].apply(lambda x: len(x) == 4)]
+    df = df.replace('--', '+0.0%' )
+    df['漲跌幅▼'] = df['漲跌幅▼'].apply(lambda x: float(x[:-1]))
+    df['振幅▼'] = df['振幅▼'].apply(lambda x: float(x[:-1]))
+    df.columns = ['代號','名稱','價格','漲跌幅','振幅','成交量','成交值(億)']
+
+    df_draft = df[(df['價格'] < 100) & (df['漲跌幅'] > 0) & (df['振幅'] > 5) & (df['成交量'] > 2000) & (df['成交值(億)'] > 15)]
+    st.table(df_draft.sort_values('成交值(億)', ascending = False))
+
+    st.subheader('我想自訂標準')
+    a, b, c = st.beta_columns(3)
+    d, e = st.beta_columns(2)
+    v1 = a.slider('價格幾塊以下？', int(df['價格'].min()), int(df['價格'].max()), value = 100)
+    v2 = b.slider('漲跌幅超過幾%？', int(df['漲跌幅'].min()), int(df['漲跌幅'].max()), value = 0)
+    v3 = c.slider('振幅超過幾%？', int(df['振幅'].min()), int(df['振幅'].max()), value = 5)
+    v4 = d.slider('成交量超過幾張？', int(df['成交量'].min()), int(df['成交量'].max()), value = 2000)
+    v5 = e.slider('成交值超過幾億？', int(df['成交值(億)'].min()), int(df['成交值(億)'].max()), value = 15)
+    criteria = st.button(label = '看看結果')
+    if criteria:
+        table = df[(df['價格'] < v1) & (df['漲跌幅'] > v2) & (df['振幅'] > v3) & (df['成交量'] > v4) & (df['成交值(億)'] > v5)]
+        st.dataframe(table)
 
     st.markdown('------------------------------------------------------------------------------------')
     st.markdown("""
