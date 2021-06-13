@@ -106,11 +106,16 @@ def active():
         crazy_dog_backtest(sid, start = start, end = end, prior_high = v1, stp = v2, log = True, plot = True)
 
     st.write('------------------------------------------------------------------------------------------')
-    st.header('瘋狗選股法回測成交值前350大的股票')
+    st.markdown("""
+    ## 瘋狗選股法回測成交值前350大的股票
+    僅列出`平均每次獲利10%以上`、`交易記錄10筆以上`、`股價10~500塊`的結果
+
+    右上角「RUNNING...」動畫跑完才算結束
+    """)
     f, g = st.beta_columns(2)
     start_ = f.date_input('Start', value = pd.to_datetime('2019-01-01'), key = '1')
     end_ = g.date_input('End', key = '2')
-    criteria_ = st.button(label = '看結果', key = '3')
+    criteria_ = st.button(label = '看結果(需要5分鐘)', key = '3')
     if criteria_:
         df = pd.read_html('https://histock.tw/stock/rank.aspx?p=all')[0]
         sids = df.sort_values('成交值(億)▼', ascending = False)['代號▼'].to_list()
@@ -125,4 +130,4 @@ def active():
             except Exception as e:
                 continue
         if good_enough == []:
-            st.write('選不到股票')
+            st.warning('選不出股票')
