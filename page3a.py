@@ -114,9 +114,9 @@ def active():
     if criteria_:
         df = pd.read_html('https://histock.tw/stock/rank.aspx?p=all')[0]
         sids = df.sort_values('成交值(億)▼', ascending = False)['代號▼'].to_list()
-        sids = [i for i in sids if len(i) == 4][:10]
+        sids = [i for i in sids if len(i) == 4][:350]
         good_enough = []
-        for i in sids[:10]:
+        for i in sids:
             try:
                 res = crazy_dog_backtest(i, start = start_ , end = end_ , prior_high = 22, stp = 8, log = False, plot = False)
                 if res[0] > 10 and res[1] > 10 and res[2] > 10 and res[2] < 500:
