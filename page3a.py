@@ -122,10 +122,7 @@ def active():
                 if res[0] > 10 and res[1] > 10 and res[2] > 10 and res[2] < 500:
                     good_enough.append(i)
                     crazy_dog_backtest(i, start = start_ , end =  end_ , prior_high = 22, stp = 8, log = True, plot = True)
-                elif good_enough == []:
-                    st.write('選不到股票')
             except Exception as e:
                 continue
-                
         if good_enough == []:
             st.write('選不到股票')
