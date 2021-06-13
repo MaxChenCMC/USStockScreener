@@ -126,3 +126,6 @@ def active():
                     st.write('選不到股票')
             except Exception as e:
                 continue
+                
+        if good_enough == []:
+            st.write('選不到股票')
