@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 st.set_page_config(page_icon = '💯', page_title = 'Max選股', layout = 'wide', initial_sidebar_state = 'auto')
 st.markdown("""<style>.main{background-color:#EFE3D8}</style>""", unsafe_allow_html = True)
 
-choice = st.sidebar.selectbox('Menu', options = ['Home', 'US Stock', 'TW Stock', 'TW Stock Backtest', 'Institutional Buyer', 'How To Learn'], index = 0)
+choice = st.sidebar.selectbox('Menu', options = ['Home', 'US Stock', 'US Stock Backtest', 'TW Stock', 'TW Stock Backtest', 'Institutional Buyer', 'How To Learn'], index = 0)
 st.sidebar.write('右上角 ≡ ☛ settings ☛ Theme 選 Light 體驗較佳')
 
 if choice == 'Home':
@@ -23,6 +23,10 @@ if choice == 'Home':
 elif choice == 'US Stock':
     import page2
     page2.active()
+
+elif choice == 'US Stock Backtest':
+    import page2a
+    page2a.active()
 
 elif choice == 'TW Stock':
     import page3
