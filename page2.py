@@ -6,24 +6,17 @@ import matplotlib.pyplot as plt
 import requests, lxml
 st.set_option('deprecation.showPyplotGlobalUse', False) # pyplot那邊很囉嗦
 
-def kbar_plot(ticker, horizon = 'fix', mkt = 'us'):
-    if horizon == 'fix':
-        kwargs = dict(period = '3mo')
-    elif horizon == 'free':
-        kwargs = dict(start = start, end = end)
-    df = yf.Ticker(ticker).history(**kwargs).iloc[:,:5]
+
+def kbar_plot(ticker, start = None, end = None, period = None):
+    df = yf.Ticker(ticker).history(start = start, end = end, period = period).iloc[:,:5]
     df.columns = df.columns.str.lower()
-    if mkt == 'us':
-        clr = mpf.make_marketcolors(up = 'g', down = 'r', edge = 'k', wick = 'k')
-    elif mkt == 'tw':
-        clr = mpf.make_marketcolors(up = 'r', down = 'g', edge = 'k', wick = 'k')
+    clr = mpf.make_marketcolors(up = 'g', down = 'r', edge = 'k', wick = 'k')
     sty = mpf.make_mpf_style( base_mpf_style = 'default', marketcolors = clr)
     kwargs = dict(type = 'candle', volume = True, style = sty)
     plt.figure(figsize = (15,5))
-    mpf.plot(df, **kwargs, title = ticker)
-    return st.pyplot()
+    return mpf.plot(df, **kwargs, title = ticker)
 
-def rebase(sids):
+def rebase(sids, start = None, end = None):
     df = pd.DataFrame({ i: yf.Ticker(i).history(start = start, end = end)['Close'] for i in sids })
     return ((1 + df.pct_change()).cumprod() - 1).fillna(0.0)
 
@@ -38,7 +31,6 @@ def watchlist_us():
     sid6 = pd.read_html('https://finance.yahoo.com/screener/predefined/undervalued_growth_stocks?offset=0&count=100')[0].Symbol.to_list()
     sid7 = pd.read_html('https://finance.yahoo.com/screener/predefined/undervalued_large_caps?offset=0&count=100')[0].Symbol.to_list()
     sid8 = pd.read_html('https://finance.yahoo.com/screener/predefined/aggressive_small_caps?offset=0&count=100')[0].Symbol.to_list()
-
     ark = pd.read_html('https://cathiesark.com/ark-funds-combined/complete-holdings')[0]['Ticker'][1:31].to_list()
     my_watchlist = ['ZM','AVID','BGFV','TIGR','APPS','ENPH','CDLX','NTP','SBOW','NIO','ZS','PLUG']
     watchlist_us = list(set(sid1 + sid2 + sid3 + sid4 + sid5 + sid6 + sid7 + sid8 + ark + my_watchlist))
@@ -62,9 +54,9 @@ def active():
     if run:
         list_to_trade = []
         for i in watchlist_us():
-            df = yf.Ticker(i).history(period = '1mo').iloc[:,:5]
+            df = yf.Ticker(i).history(period = '2mo').iloc[:,:5]
             cond1 = (df['Close'] * 1.03 > df['High'].rolling(22).max())[-1]
-            cond2 = ((df['Close'] - df['Open']) > abs(df['Open'] - df['Close']).rolling(10).mean()*2.5)[-1]
+            cond2 = ((df['Close'] - df['Open']) > abs(df['Open'] - df['Close']).rolling(10).mean() * 2.5)[-1]
             cond3 = (df['Volume'] > df['Volume'].rolling(5).mean() * 1.3)[-1]
             duo_ma = df['Close'].rolling(5).mean() >= df['Close'].rolling(10).mean()
             cond4 = ((duo_ma == True) & ((duo_ma != duo_ma.shift()).rolling(5).sum() == 1))[-1]
@@ -82,48 +74,55 @@ def active():
         if list_to_trade != []:
             st.text_area(label = '選股結果請先複製下來，不然網頁更新時會被洗掉', value = list_to_trade)
             for i in list_to_trade:
-                kbar_plot(i, horizon = 'fix', mkt = 'us')
+                kbar_plot(i, period = '3mo')
+                st.pyplot()
         else:
             st.warning('條件別設太嚴不然選不出東西')
 
     st.markdown('------------------------------------------------------------------------------------')
     st.header('我有自己想看的')
     req1, req2, req3 = st.beta_columns(3)
-    global start, end
     start = req1.date_input('Start', value = pd.to_datetime('2021-04-01'),key = '1')
     end = req2.date_input('End', key = '2')
-    ticker = req3.text_input('股號', value='GME')
-    kbar_plot(ticker, horizon = 'free', mkt = 'us')
+    ticker = req3.text_input('股號', value = 'GME')
+    run = st.button('OK')
+    if run:
+        kbar_plot(ticker, start = start, end = end)
+        st.pyplot()
 
 
     st.markdown('------------------------------------------------------------------------------------')
     st.header('同期強弱勢比較')
     col1, col2 = st.beta_columns(2)
-    start = col1.date_input('Start', value = pd.to_datetime('2021-01-01'), key='3')
-    end = col2.date_input('End', key='4')
-
-    sids = st.radio('',('國際指數','SPDR 11 SECTORS','ARKK Top15')) #'Freddy的MFA', '我瞎湊的MFA'
+    start = col1.date_input('Start', value = pd.to_datetime('2021-01-01'), key = '3')
+    end = col2.date_input('End', key = '4')
+    sids = st.radio('',('國際指數','SPDR 11 SECTORS','ARKK Top15'))
     if sids == '國際指數':
-        df = rebase(['^DJI','^IXIC','^GSPC','^SOX','^GDAXI','EWT','^TWII','^TWOII'])
-        df.columns = ['道瓊','那斯達克','標普500','費城半導體','德國DAX','MSCI台灣','加權','櫃買']
+        df = rebase(['^DJI','^IXIC','^GSPC','^SOX','^GDAXI','EWT','^TWII','^TWOII'], start = start, end = end)
+        df.columns = ['DowJones','Nasdaq','S&P 500','PHLX Semiconductor','DAX Germany','MSCI Taiwan','TSE','OTC']
     elif sids == 'SPDR 11 SECTORS':
-        df = rebase(['XLB','XLC','XLE','XLF','XLI','XLK','XLP','XLRE','XLU','XLV','XLY'])
+        df = rebase(['XLB','XLC','XLE','XLF','XLI','XLK','XLP','XLRE','XLU','XLV','XLY'], start = start, end = end)
         df.columns = ['Materials','Communication Services','Energy','Financials','Industrials','Technology',
         'Consumer Staples','Real Estate','Utilities','Health Care','Consumer Discretionary']
     elif sids == 'ARKK Top15':
         ark = pd.read_html('https://cathiesark.com/ark-funds-combined/complete-holdings')[0]['Ticker'][1:16].to_list()
-        df = rebase(ark)
-    st.line_chart(df) # APP原生圖的legend照字母排序 .sort_values(by = df.index[-1], ascending= False, axis= 1)
+        df = rebase(ark, start = start, end = end)
+    df.sort_values(by = df.index[-1], ascending = False, axis = 1).plot(figsize = (15,12))
+    plt.legend(loc = 2)
+    st.pyplot() # st.line_chart() 自動生成的legend是照字母排序
 
 
     st.markdown('------------------------------------------------------------------------------------')
     st.header('前16大權值股，挑幾檔順眼的來比一比')
     col1, col2 = st.beta_columns(2)
-    start = col1.date_input('Start', value = pd.to_datetime('2021-01-01'), key='5')
-    end = col2.date_input('End', key='6')
-
+    start = col1.date_input('Start', value = pd.to_datetime('2021-01-01'), key = '5')
+    end = col2.date_input('End', key = '6')
     blue_chips = ['AAPL','MSFT','AMZN','GOOG','FB','TSLA','TSM','BABA','V','JPM','JNJ','WMT','MA','NVDA','UNH','BA']
     weighted = st.multiselect('', blue_chips, default = ['GOOG','FB','AAPL','TSLA'])
     show = st.button('先挑這些', key = '7')
     if show:
-        st.line_chart(rebase(weighted))
+        df = rebase(weighted, start = start, end = end)
+        df.sort_values(by = df.index[-1], ascending = False, axis = 1).plot(figsize = (15,10))
+        plt.legend(loc = 0)
+        st.pyplot()
+
