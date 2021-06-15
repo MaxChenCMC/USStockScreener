@@ -5,10 +5,11 @@ from io import StringIO
 from bs4 import BeautifulSoup
 from FinMind.data import DataLoader
 
-date_format = pd.date_range(end = pd.to_datetime('today'), periods = 16, freq = 'B')
-date_df = date_format.strftime('%Y-%m-%d')
+last_update = pd.read_html('https://www.taifex.com.tw/cht/3/futContractsDate')[2].loc[0,0][-10:]
+date_format = pd.date_range(end = pd.to_datetime(last_update), periods = 15+1, freq = 'B')
 date_tse = date_format.strftime('%Y%m%d')
 date_txf = date_format.strftime('%Y/%m/%d')
+date_df = date_format.strftime('%Y-%m-%d')
 
 def oi_last():
     df = pd.read_html('https://www.taifex.com.tw/cht/3/futContractsDate')[3][3:15]
@@ -62,7 +63,6 @@ def gold_ma():
     return tw50
 
 def active():
-    last_update = pd.read_html('https://www.taifex.com.tw/cht/3/futContractsDate')[2].loc[0,0][-10:]
     st.subheader(f'{last_update}三大法人大小台動向')
     st.text('盤後15:00左右更新')
     df = oi_last()
@@ -71,19 +71,20 @@ def active():
     st.header('歷史行情籌碼解讀')
     show = st.button('我瞧瞧(需要2分鐘)')
     if show:
-        comb = pd.concat([ oi_history(), gold_ma()], axis = 1)
+        comb = pd.concat([oi_history(), gold_ma()], axis = 1)
         comb.index = comb.index.strftime('%Y-%m-%d')
         # df['隔天加權漲跌點數'] = yf.Ticker('^TWII').history(period = '10d')['Close'].diff().shift(-1)
         comb.columns = ['外資現股買賣超','投信現股買賣超','外資大台多空淨額','外資大台未平倉','外資小台多空淨額','外資小台未平倉','前50大權值股站上十日線總檔數']
         st.table(comb.tail())
         st.markdown("""
         ● 法人現股買賣超若比過去5日的平均值還多，表示法人偏多；反之則偏空。
-        
+
         ● 外資大小台當日多空淨額若為正，即表示偏多，而未平倉口數若較過去5日的中位數高，即表示行情偏多；反之則偏空。
-        
+
         ● 上市前50大權值股中，若站上十日線的檔數比過去5日平均還多，則行情偏多。
-        
+
         `歷史行情7個欄位中，若都沒出現訊號則行情偏空，而訊號 4~7 則行情偏多`
+
         """)
         df = pd.DataFrame()
         df['f1'] = comb.iloc[:,0] > comb.iloc[:,0].rolling(5).mean() # 中位 ☛ 多停85；空整體都有利
