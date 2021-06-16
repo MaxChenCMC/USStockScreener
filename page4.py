@@ -74,7 +74,7 @@ def active():
         comb = pd.concat([oi_history(), gold_ma()], axis = 1)
         comb.index = comb.index.strftime('%Y-%m-%d')
         # df['隔天加權漲跌點數'] = yf.Ticker('^TWII').history(period = '10d')['Close'].diff().shift(-1)
-        comb.columns = ['外資現股買賣超','投信現股買賣超','外資大台多空淨額','外資大台未平倉','外資小台多空淨額','外資小台未平倉','前50大權值股站上十日線總檔數']
+#         comb.columns = ['外資現股買賣超','投信現股買賣超','外資大台多空淨額','外資大台未平倉','外資小台多空淨額','外資小台未平倉','前50大權值股站上十日線總檔數']
         st.table(comb.tail())
         st.markdown("""
         ● 法人現股買賣超若比過去5日的平均值還多，表示法人偏多；反之則偏空。
@@ -94,6 +94,8 @@ def active():
         df['f5'] = comb.iloc[:,4] > 0
         df['f6'] = (comb.iloc[:,5] > comb.iloc[:,5].rolling(5).median()) & (comb.iloc[:,5] > 0)
         df['f7'] = comb.iloc[:,6] > comb.iloc[:,6].rolling(5).mean()
+        df.columns = ['外資現股買賣超','投信現股買賣超','外資大台多空淨額','外資大台未平倉','外資小台多空淨額','外資小台未平倉','前50大權值股站上十日線總檔數']
+        st.table(df.tail(1))
         df_ = df.sum(axis = 1).to_frame().tail().T
         df_.index = ['訊號']
         st.table(df_)
