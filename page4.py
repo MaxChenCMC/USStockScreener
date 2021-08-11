@@ -73,8 +73,7 @@ def active():
     show = st.button('我瞧瞧(需要2分鐘)')
     if show:
         comb = pd.concat([oi_history(), gold_ma()], axis = 1)
-#         comb.index = comb.index.strftime('%Y-%m-%d')
-        # df['隔天加權漲跌點數'] = yf.Ticker('^TWII').history(period = '10d')['Close'].diff().shift(-1)
+        comb.index = comb.index.strftime('%Y-%m-%d') # colab裡index不會跑出分秒但streamlit卻會，只好強制格式
         comb.columns = ['外資現股買賣超','投信現股買賣超','外資大台多空淨額','外資大台未平倉','外資小台多空淨額','外資小台未平倉','前50大權值股站上十日線總檔數']
         st.table(comb.tail())
         st.markdown("""
