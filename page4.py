@@ -1,15 +1,16 @@
 import streamlit as st
 import pandas as pd
-import requests, time
+import requests, time, datetime
 from io import StringIO
 from bs4 import BeautifulSoup
 from FinMind.data import DataLoader
 
+market_closed = 0
 last_update = pd.read_html('https://www.taifex.com.tw/cht/3/futContractsDate')[2].loc[0,0][-10:]
-date_format = pd.date_range(end = pd.to_datetime(last_update), periods = 15+1, freq = 'B')
+date_format = pd.date_range(end = pd.to_datetime(last_update), periods = 5 + market_closed, freq = 'B')
+date_df = date_format.strftime('%Y-%m-%d')
 date_tse = date_format.strftime('%Y%m%d')
 date_txf = date_format.strftime('%Y/%m/%d')
-date_df = date_format.strftime('%Y-%m-%d')
 
 def oi_last():
     df = pd.read_html('https://www.taifex.com.tw/cht/3/futContractsDate')[3][3:15]
@@ -53,12 +54,12 @@ def oi_history():
     return oi
 
 def gold_ma():
-    tse = pd.read_html('https://www.taifex.com.tw/cht/9/futuresQADetail')[0]['證券名稱'][:50].to_list()
     fm = DataLoader()
-    start, end = date_df[0], date_df[-1]
-    tw50 = pd.DataFrame({i: fm.taiwan_stock_daily(i, start, end)['close'] for i in tse})
-    tw50 = tw50 > tw50.rolling(10).mean()
-    tw50 = tw50.sum(axis=1)
+    tse50 = pd.read_html('https://www.taifex.com.tw/cht/9/futuresQADetail')[0]['證券名稱'][:50].to_list()
+    start = (pd.to_datetime(date_df[0]) - datetime.timedelta(days = 14 + market_closed)).strftime('%Y-%m-%d')
+    tw50_df = pd.DataFrame({i: fm.taiwan_stock_daily(i, start, date_df[-1])['close'] for i in tse50})
+    tw50 = tw50_df > tw50_df.rolling(10).mean()
+    tw50 = tw50.sum(axis=1)[-5:]
     tw50.index = oi_index
     return tw50
 
@@ -72,7 +73,7 @@ def active():
     show = st.button('我瞧瞧(需要2分鐘)')
     if show:
         comb = pd.concat([oi_history(), gold_ma()], axis = 1)
-        comb.index = comb.index.strftime('%Y-%m-%d')
+#         comb.index = comb.index.strftime('%Y-%m-%d')
         # df['隔天加權漲跌點數'] = yf.Ticker('^TWII').history(period = '10d')['Close'].diff().shift(-1)
         comb.columns = ['外資現股買賣超','投信現股買賣超','外資大台多空淨額','外資大台未平倉','外資小台多空淨額','外資小台未平倉','前50大權值股站上十日線總檔數']
         st.table(comb.tail())
