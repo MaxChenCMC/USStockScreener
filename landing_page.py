@@ -2,52 +2,30 @@ import streamlit as st
 import pandas as pd
 
 
+def global_index():
+    df = pd.read_html("http://jsjustweb.jihsun.com.tw/z/ze/zeo/zeo.djhtm")[2]
+    df.columns = list(df.iloc[2, :])
+    df = df[
+        df["指數名稱"].str.contains("上市")
+        | df["指數名稱"].str.contains("櫃買")
+        | df["指數名稱"].str.contains("道瓊指")
+        | df["指數名稱"].str.contains("那斯達克")
+        | df["指數名稱"].str.contains("S&P")
+        | df["指數名稱"].str.contains("費城")
+        | df["指數名稱"].str.contains("日經")
+        | df["指數名稱"].str.contains("KOSPI")
+    ]
+    df.reset_index(inplace=True, drop=True)
+    return df
+
+
 def active():
     today = pd.to_datetime("today").strftime("%Y-%m-%d")
     st.image("./img/cover.jpg", use_column_width=True)
     st.markdown(
         f"<h1 style= 'text-align: center;'> {today}國際重要指數</h1>", unsafe_allow_html=True
     )
-    # number1 = yf.Ticker("^IXIC").history(period="d")["Close"][-1:].values[0]
-    # number2 = yf.Ticker("^GDAXI").history(period="d")["Close"][-1:].values[0]
-    # number3 = yf.Ticker("^HSI").history(period="d")["Close"][-1:].values[0]
-    # number4 = yf.Ticker("^TWII").history(period="d")["Close"][-1:].values[0]
-    number1, number2, number3, number4 = 54654, 83, 65654, 32813
-
-    numb1, numb2, numb3, numb4 = st.beta_columns(4)
-
-    numb1.markdown(
-        f"<h1 style= 'text-align: center; color: grey;'>{number1}</h1>",
-        unsafe_allow_html=True,
-    )
-    numb1.markdown(
-        f"<h4 style= 'text-align: center; color: grey;'> Nasdaq </h4>",
-        unsafe_allow_html=True,
-    )
-    numb2.markdown(
-        f"<h1 style= 'text-align: center; color: grey;'>{number2}</h1>",
-        unsafe_allow_html=True,
-    )
-    numb2.markdown(
-        f"<h4 style= 'text-align: center; color: grey;'> DAX </h4>",
-        unsafe_allow_html=True,
-    )
-    numb3.markdown(
-        f"<h1 style= 'text-align: center; color: grey;'>{number3}</h1>",
-        unsafe_allow_html=True,
-    )
-    numb3.markdown(
-        f"<h4 style= 'text-align: center; color: grey;'> 上海恆生 </h4>",
-        unsafe_allow_html=True,
-    )
-    numb4.markdown(
-        f"<h1 style= 'text-align: center; color: grey;'>{number4}</h1>",
-        unsafe_allow_html=True,
-    )
-    numb4.markdown(
-        f"<h4 style= 'text-align: center; color: grey;'> 台股加權 </h4>",
-        unsafe_allow_html=True,
-    )
+    st.table(global_index())
 
     st.markdown(
         "------------------------------------------------------------------------------------"
