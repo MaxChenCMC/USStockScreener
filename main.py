@@ -1,5 +1,13 @@
 import streamlit as st
-import landing_page, tw_stock, tw_stock_bt, after_market
+import landing_page, tw_stock, tw_stock_bt, after_market  # , us_stock   , us_stock_bt
+import pandas as pd
+import numpy as np
+from FinMind.data import DataLoader
+import mplfinance as mpf
+import requests, time, lxml  # lxml在本地端不用，但佈屬streamlit雲端就要
+import matplotlib.pyplot as plt
+from io import StringIO
+from bs4 import BeautifulSoup
 
 st.set_page_config(
     page_icon="💯", page_title="Max選股", layout="centered", initial_sidebar_state="auto"
