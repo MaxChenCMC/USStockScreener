@@ -2,7 +2,7 @@ import streamlit as st
 import landing_page, tw_stock, tw_stock_bt, after_market  # , us_stock   , us_stock_bt
 
 st.set_page_config(
-    page_icon="💯", page_title="Max選股", layout="wide", initial_sidebar_state="auto"
+    page_icon="💯", page_title="Max選股", layout="centered", initial_sidebar_state="auto"
 )
 
 st.markdown(
