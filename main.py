@@ -32,7 +32,7 @@ choice = st.sidebar.selectbox(
         "TW Stock Backtest",
         "After Market Disclosure",
     ],
-    index=1,
+    index=0,
 )
 st.sidebar.write("右上角 ≡ ☛ settings ☛ Theme 選 Light 體驗較佳")
 
