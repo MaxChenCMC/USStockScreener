@@ -17,8 +17,8 @@ st.markdown(
     """<style>
 .main{
     background-color: #EFE3D8;
-    color: #555555;
-    font = bold 16px Arial, Helvetica, sans-serif;
+    color: #black;
+    font = bold 14px Arial, Helvetica, sans-serif;
 }
 </style>""",
     unsafe_allow_html=True,
