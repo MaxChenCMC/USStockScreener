@@ -34,7 +34,7 @@ choice = st.sidebar.selectbox(
     ],
     index=0,
 )
-st.sidebar.write("右上角 ≡ ☛ settings ☛ Theme 選 Light 體驗較佳")
+# st.sidebar.write("右上角 ≡ ☛ settings ☛ Theme 選 Light 體驗較佳")
 
 if choice == "Home":
     landing_page.active()
