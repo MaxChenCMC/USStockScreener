@@ -1,7 +1,7 @@
 numpy==1.19.5
 matplotlib==3.2.1
 mplfinance==0.12.7a17
-yfinance==0.1.54
+yfinance==0.1.62
 lxml==4.6.3
 requests==2.23.0
 pandas==1.1.5
