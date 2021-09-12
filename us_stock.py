@@ -141,7 +141,7 @@ def active():
         "------------------------------------------------------------------------------------"
     )
     st.header("我有自己想看的")
-    req1, req2, req3 = st.beta_columns(3)
+    req1, req2, req3 = st.columns(3)
     start = req1.date_input("Start", value=pd.to_datetime("2021-04-01"), key="1")
     end = req2.date_input("End", key="2")
     ticker = req3.text_input("股號", value="GME")
@@ -154,7 +154,7 @@ def active():
         "------------------------------------------------------------------------------------"
     )
     st.header("同期強弱勢比較")
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     start = col1.date_input("Start", value=pd.to_datetime("2021-01-01"), key="3")
     end = col2.date_input("End", key="4")
     sids = st.radio("", ("國際指數", "SPDR 11 SECTORS", "ARKK Top15"))
@@ -218,7 +218,7 @@ def active():
         "------------------------------------------------------------------------------------"
     )
     st.header("前16大權值股，挑幾檔順眼的來比一比")
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     start = col1.date_input("Start", value=pd.to_datetime("2021-01-01"), key="5")
     end = col2.date_input("End", key="6")
     blue_chips = [
