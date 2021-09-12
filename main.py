@@ -1,5 +1,5 @@
 import streamlit as st
-import landing_page, tw_stock, tw_stock_bt, after_market, us_stock, us_stock_bt
+import landing_page, tw_stock, tw_stock_bt, after_market, us_stock#, us_stock_bt
 
 st.set_page_config(
     page_icon="💯", page_title="Max選股", layout="wide", initial_sidebar_state="auto"
@@ -24,7 +24,7 @@ choice = st.sidebar.selectbox(
         "TW Stock Backtest",
         "After Market Disclosure",
         "US Stock",
-        "US Stock Backtest",
+        # "US Stock Backtest",
     ],
     index=0,
 )
@@ -45,5 +45,5 @@ elif choice == "After Market Disclosure":
 elif choice == "US Stock":
     us_stock.active()
 
-elif choice == "US Stock Backtest":
-    us_stock_bt.active()
+# elif choice == "US Stock Backtest":
+#     us_stock_bt.active()
