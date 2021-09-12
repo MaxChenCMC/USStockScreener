@@ -122,14 +122,14 @@ def active():
     ```
     """
     )
-    a, b, c = st.beta_columns(3)
+    a, b, c = st.columns(3)
     sid = a.text_input("輸入股號", value="2603", key="11")
     start = b.date_input("Start", value=pd.to_datetime("2019-01-01"), key="22")
     end = c.date_input("End", key="33")
-    d, e = st.beta_columns(2)
+    d, e = st.columns(2)
     v1 = d.slider("即將創幾日新高？", int(22), int(100), value=22)
     v2 = e.slider("從高點拉回幾趴停損？", 5, 20, value=8)
-    criteria = st.button(label="看結果")
+    criteria = st.button(label="看結果", key="44")
     if criteria:
         crazy_dog_backtest(
             sid, start=start, end=end, prior_high=v1, stp=v2, log=True, plot=True
@@ -146,10 +146,10 @@ def active():
     右上角「RUNNING...」動畫跑完才算結束
     """
     )
-    f, g = st.beta_columns(2)
-    start_ = f.date_input("Start", value=pd.to_datetime("2019-01-01"), key="44")
-    end_ = g.date_input("End", key="55")
-    criteria_ = st.button(label="看結果(需要5分鐘)", key="66")
+    f, g = st.columns(2)
+    start_ = f.date_input("Start", value=pd.to_datetime("2019-01-01"), key="55")
+    end_ = g.date_input("End", key="66")
+    criteria_ = st.button(label="看結果(需要5分鐘)", key="77")
     if criteria_:
         df = pd.read_html("https://histock.tw/stock/rank.aspx?p=all")[0]
         sids = df.sort_values("成交值(億)▼", ascending=False)["代號▼"].to_list()
