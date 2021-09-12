@@ -154,5 +154,4 @@ def active():
         df_.index = ["訊號"]
         st.table(df_)
 
-
 active()
