@@ -3,7 +3,8 @@ import pandas as pd
 from FinMind.data import DataLoader
 import mplfinance as mpf
 import matplotlib.pyplot as plt
-import lxml
+
+# import lxml
 
 st.set_option("deprecation.showPyplotGlobalUse", False)  # pyplot那邊很囉嗦
 
@@ -13,7 +14,7 @@ def kbar_plot(i=None, start=None, end=None, plot=False):
     df = fm.taiwan_stock_daily(i, start_date=start, end_date=end)[
         ["date", "open", "max", "min", "close", "Trading_Volume"]
     ]
-    # df.columns = ["date", "open", "high", "low", "close", "volume"]
+    df.columns = ["date", "open", "high", "low", "close", "volume"]
     df = df.set_index("date")
     df.index = pd.to_datetime(df.index)
     if plot == True:
@@ -23,7 +24,8 @@ def kbar_plot(i=None, start=None, end=None, plot=False):
         plt.figure(figsize=(15, 5))
         mpf.plot(df, **kwargs, title=i)
         st.pyplot()
-    return df
+    else:
+        return df
 
 
 # 過去一季66個交易日的日期list
@@ -96,7 +98,7 @@ def active():
     )
 
     criteria = st.multiselect(
-        "最多4個", ["即將創近月新高", "長紅K棒", "爆量", "最近剛黃金交叉"], default=["即將創近月新高", "長紅K棒", "爆量"]
+        "最多4個", ["即將創近月新高", "長紅K棒", "爆量", "最近剛黃金交叉"], default=["長紅K棒", "爆量"]
     )
     run = st.button("開始選股(需要20秒)")
     if run:
@@ -115,12 +117,12 @@ def active():
         list_to_trade = []
         for i in top100:
             df = kbar_plot(i=i, start=quarter[-22], end=quarter[-1], plot=False)
-            cond1 = (df["close"] * 1.03 > df["max"].rolling(22).max())[-1]
+            cond1 = (df["close"] * 1.03 > df["high"].rolling(22).max())[-1]
             cond2 = (
                 (df["close"] - df["open"])
                 > abs(df["open"] - df["close"]).rolling(10).mean() * 2.5
             )[-1]
-            cond3 = (df["Trading_Volume"] > df["Trading_Volume"].rolling(5).mean() * 1.5)[-1]
+            cond3 = (df["volume"] > df["volume"].rolling(5).mean() * 1.5)[-1]
             duo_ma = df["close"].rolling(5).mean() >= df["close"].rolling(10).mean()
             cond4 = (
                 (duo_ma == True) & ((duo_ma != duo_ma.shift()).rolling(5).sum() == 1)
@@ -150,7 +152,7 @@ def active():
     req1, req2, req3 = st.columns([1, 1, 2])
     start = req1.date_input("Start", value=pd.to_datetime("2021-07-01"))
     end = req2.date_input("End")
-    i = req3.text_input("輸入股號", value="2603")
+    i = req3.text_input("輸入股號", value="6104")
     run = st.button("開始")
     if run:
         kbar_plot(i=i, start=start, end=end, plot=True)
