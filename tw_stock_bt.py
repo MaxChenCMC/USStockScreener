@@ -123,7 +123,7 @@ def active():
     """
     )
     a, b, c = st.columns(3)
-    sid = a.text_input("輸入股號", value="2603", key="11")
+    sid = a.text_input("輸入股號", value="6104", key="11")
     start = b.date_input("Start", value=pd.to_datetime("2019-01-01"), key="22")
     end = c.date_input("End", key="33")
     d, e = st.columns(2)
@@ -180,7 +180,7 @@ def active():
             except Exception as e:
                 continue
         if good_enough == []:
-            st.warning("選不出股票")
+            st.warning("條件太嚴格，選不出股票")
 
 
 active()
