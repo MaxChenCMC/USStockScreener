@@ -109,35 +109,38 @@ def active():
             "https://fubon-ebrokerdj.fbs.com.tw/z/zg/zg_A_1_1.djhtm"
         )[2][1][2:]
         top100 = []
-#         for i in rank_tse:
-#             top100.append(i[:4])
+        for i in rank_tse:
+            top100.append(i[:4])
         for i in rank_otc:
             top100.append(i[:4])
 
         list_to_trade = []
-        for i in top100:
-            df = kbar_plot(i=i, start=quarter[-22], end=quarter[-1], plot=False)
-            cond1 = (df["close"] * 1.03 > df["high"].rolling(22).max())[-1]
-            cond2 = (
-                (df["close"] - df["open"])
-                > abs(df["open"] - df["close"]).rolling(10).mean() * 2.5
-            )[-1]
-            cond3 = (df["volume"] > df["volume"].rolling(5).mean() * 1.5)[-1]
-            duo_ma = df["close"].rolling(5).mean() >= df["close"].rolling(10).mean()
-            cond4 = (
-                (duo_ma == True) & ((duo_ma != duo_ma.shift()).rolling(5).sum() == 1)
-            )[-1]
-            criteria_ = []
-            if "即將創近月新高" in criteria:
-                criteria_.append(cond1)
-            if "長紅K棒" in criteria:
-                criteria_.append(cond2)
-            if "爆量" in criteria:
-                criteria_.append(cond3)
-            if "最近剛黃金交叉" in criteria:
-                criteria_.append(cond4)
-            if sum(criteria_) == len(criteria):
-                list_to_trade.append(i)
+        for i in set(top100):
+            try:
+                df = kbar_plot(i=i, start=quarter[-22], end=quarter[-1], plot=False)
+                cond1 = (df["close"] * 1.03 > df["high"].rolling(22).max())[-1]
+                cond2 = (
+                    (df["close"] - df["open"])
+                    > abs(df["open"] - df["close"]).rolling(10).mean() * 2.5
+                )[-1]
+                cond3 = (df["volume"] > df["volume"].rolling(5).mean() * 1.5)[-1]
+                duo_ma = df["close"].rolling(5).mean() >= df["close"].rolling(10).mean()
+                cond4 = (
+                    (duo_ma == True) & ((duo_ma != duo_ma.shift()).rolling(5).sum() == 1)
+                )[-1]
+                criteria_ = []
+                if "即將創近月新高" in criteria:
+                    criteria_.append(cond1)
+                if "長紅K棒" in criteria:
+                    criteria_.append(cond2)
+                if "爆量" in criteria:
+                    criteria_.append(cond3)
+                if "最近剛黃金交叉" in criteria:
+                    criteria_.append(cond4)
+                if sum(criteria_) == len(criteria):
+                    list_to_trade.append(i)
+            except Exception as e:
+                pass
         if list_to_trade != []:
             st.text_area(label="選股結果請先複製下來，不然網頁更新時會被洗掉", value=list_to_trade)
             for i in list_to_trade:
