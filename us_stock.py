@@ -3,7 +3,7 @@ import pandas as pd
 import yfinance as yf
 import mplfinance as mpf
 import matplotlib.pyplot as plt
-import requests, lxml
+import requests
 
 st.set_option("deprecation.showPyplotGlobalUse", False)  # pyplot那邊很囉嗦
 
