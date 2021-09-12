@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import requests, time, datetime  # Pep8 request inline coment upper its first letter.__#_井前空2後空1。說不同套件不該擠在同一行，而只引用一個大套件的其中數個小套件就可擠同一行
+import requests, time, datetime
 from io import StringIO
 from bs4 import BeautifulSoup
 from FinMind.data import DataLoader
@@ -41,44 +41,8 @@ def oi_history():
                 .dropna(how="all", axis=1)
                 .dropna(how="any")
             )
-            institution = int(df.loc[3, "買賣差額"].replace(",", ""))  # 外資及陸資(不含自營)
-            trust = int(df.loc[2, "買賣差額"].replace(",", ""))  # 投信
-            time.sleep(3)
-            # 現貨沒休市的話 期貨也不必偵錯了 直接爬
-            myobj = {"queryDate": date_txf[i], "queryType": 1}
-            response = requests.post(
-                "https://www.taifex.com.tw/cht/3/futContractsDate", data=myobj
-            )
-            soup = BeautifulSoup(response.text, features="html.parser")
-            table = soup.find("table", class_="table_f")
-            tx = table.find_all("tr")[5].find_all("td")
-            txnet = int([i.text.strip() for i in tx][4].replace(",", ""))
-            txoi = int([i.text.strip() for i in tx][10].replace(",", ""))
-            mtx = table.find_all("tr")[14].find_all("td")
-            mtxnet = int([i.text.strip() for i in mtx][4].replace(",", ""))
-            mtxoi = int([i.text.strip() for i in mtx][10].replace(",", ""))
-            res = [date_df[i], institution, trust, txnet, txoi, mtxnet, mtxoi]
-            tb.append(res)
-        else:
-            print(f"{date_df[i]}休市\n")
-
-
-def oi_history():
-    tb = []
-    for i in range(len(date_format)):
-        r = requests.get(
-            "https://www.twse.com.tw/fund/BFI82U?response=csv&dayDate="
-            + date_tse[i]
-            + "&type=day"
-        )
-        if r.text != "\r\n":
-            df = (
-                pd.read_csv(StringIO(r.text), header=1)
-                .dropna(how="all", axis=1)
-                .dropna(how="any")
-            )
-            institution = int(df.loc[3, "買賣差額"].replace(",", ""))  # 外資及陸資(不含自營)
-            trust = int(df.loc[2, "買賣差額"].replace(",", ""))  # 投信
+            institution = int(df.loc[3, "買賣差額"].replace(",", ""))
+            trust = int(df.loc[2, "買賣差額"].replace(",", ""))
             time.sleep(3)
             # 現貨沒休市的話 期貨也不必偵錯了 直接爬
             myobj = {"queryDate": date_txf[i], "queryType": 1}
@@ -167,10 +131,8 @@ def active():
         """
         )
         df = pd.DataFrame()
-        df["f1"] = (
-            comb.iloc[:, 0] > comb.iloc[:, 0].rolling(5).mean()
-        )  # 中位 ☛ 多停85；空整體都有利
-        df["f2"] = comb.iloc[:, 1] > comb.iloc[:, 1].rolling(5).mean()  # 唯一選擇 平均
+        df["f1"] = comb.iloc[:, 0] > comb.iloc[:, 0].rolling(5).mean()
+        df["f2"] = comb.iloc[:, 1] > comb.iloc[:, 1].rolling(5).mean()
         df["f3"] = comb.iloc[:, 2] > 0
         df["f4"] = comb.iloc[:, 3] > comb.iloc[:, 3].rolling(5).median()
         df["f5"] = comb.iloc[:, 4] > 0
