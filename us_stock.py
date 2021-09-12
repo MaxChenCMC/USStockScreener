@@ -88,8 +88,9 @@ def active():
         """
     # 動能選股
     #### 選股範圍
-    [ARK方舟基金前30大持股](https://cathiesark.com/ark-funds-combined/complete-holdings)
-    加 [S&P500成份股](https://www.slickcharts.com/sp500)
+    [S&P500成份股](https://www.slickcharts.com/sp500)
+    加 [Yahoo Finance Screeners](https://finance.yahoo.com/screener)
+    加 [ARK方舟基金前30大持股](https://cathiesark.com/ark-funds-combined/complete-holdings)
     ####
     """
     )
