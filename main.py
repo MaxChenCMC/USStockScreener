@@ -1,5 +1,5 @@
 import streamlit as st
-import landing_page, tw_stock, tw_stock_bt, after_market, us_stock#, us_stock_bt
+import landing_page, tw_stock, tw_stock_bt, after_market, us_stock  # , us_stock_bt
 
 st.set_page_config(
     page_icon="💯", page_title="Max選股", layout="wide", initial_sidebar_state="auto"
@@ -28,7 +28,7 @@ choice = st.sidebar.selectbox(
     ],
     index=0,
 )
-st.sidebar.write("To have a better experience...\nSettings > Theme > Light")
+st.sidebar.write("To have a better experience... Settings > Theme > Light")
 
 if choice == "Home":
     landing_page.active()
