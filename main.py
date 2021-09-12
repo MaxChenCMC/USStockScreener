@@ -13,7 +13,7 @@ import landing_page, tw_stock, tw_stock_bt, after_market
 # from bs4 import BeautifulSoup
 
 # page_icon="💯",
-st.set_page_config(page_title="Max選股", layout="wide", initial_sidebar_state="auto")
+# st.set_page_config(page_title="Max選股", layout="wide", initial_sidebar_state="auto")
 
 st.markdown(
     """<style>
@@ -34,7 +34,7 @@ choice = st.sidebar.selectbox(
         "TW Stock Backtest",
         "After Market Disclosure",
     ],
-    index=1,
+    index=0,
 )
 st.sidebar.write("右上角 ≡ ☛ settings ☛ Theme 選 Light 體驗較佳")
 
