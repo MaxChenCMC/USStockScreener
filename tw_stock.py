@@ -63,11 +63,11 @@ def active():
     st.table(df_.sort_values("成交值(億)", ascending=False))
 
     st.header("我想自訂標準")
-    a, b, c = st.beta_columns(3)
+    a, b, c = st.columns(3)
     v1 = a.slider("價格幾塊以下？", int(df["價格"].min()), int(df["價格"].max()), value=150)
     v2 = b.slider("漲跌幅超過幾%？", int(df["漲跌幅"].min()), int(df["漲跌幅"].max()), value=0)
     v3 = c.slider("振幅超過幾%？", int(df["振幅"].min()), int(df["振幅"].max()), value=5)
-    d, e = st.beta_columns(2)
+    d, e = st.columns(2)
     v4 = d.slider("成交量超過幾張？", int(df["成交量"].min()), int(df["成交量"].max()), value=2000)
     v5 = e.slider(
         "成交值超過幾億？", int(df["成交值(億)"].min()), int(df["成交值(億)"].max()), value=15
@@ -147,8 +147,8 @@ def active():
         "------------------------------------------------------------------------------------"
     )
     st.header("我有自己想看的")
-    req1, req2, req3 = st.beta_columns([1, 1, 2])
-    start = req1.date_input("Start", value=pd.to_datetime("2021-04-01"))
+    req1, req2, req3 = st.columns([1, 1, 2])
+    start = req1.date_input("Start", value=pd.to_datetime("2021-07-01"))
     end = req2.date_input("End")
     i = req3.text_input("輸入股號", value="2603")
     run = st.button("開始")
