@@ -1,5 +1,5 @@
 import streamlit as st
-import landing_page, tw_stock, tw_stock_bt, after_market, us_stock
+import landing_page, tw_stock, tw_stock_bt, after_market, us_stock, us_stock_bt
 
 st.set_page_config(
     page_icon="💯", page_title="Max選股", layout="wide", initial_sidebar_state="auto"
@@ -24,10 +24,11 @@ choice = st.sidebar.selectbox(
         "TW Stock Backtest",
         "After Market Disclosure",
         "US Stock",
+        "US Stock Backtest",
     ],
     index=0,
 )
-st.sidebar.write("右上角 ≡ ☛ settings ☛ Theme 選 Light 體驗較佳")
+st.sidebar.write("To have a better experience...\nSettings > Theme > Light")
 
 if choice == "Home":
     landing_page.active()
@@ -44,5 +45,5 @@ elif choice == "After Market Disclosure":
 elif choice == "US Stock":
     us_stock.active()
 
-# elif choice == "US Stock Backtest":
-#     us_stock_bt.active()
+elif choice == "US Stock Backtest":
+    us_stock_bt.active()
