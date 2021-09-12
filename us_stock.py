@@ -97,7 +97,7 @@ def active():
     criteria = st.multiselect(
         "最多4個", ["即將創近月新高", "長紅K棒", "爆量", "最近剛黃金交叉"], default=["即將創近月新高", "長紅K棒", "爆量"]
     )
-    run = st.button("開始選股(需要8~10分鐘)")
+    run = st.button("開始選股(需要3~5分鐘)")
     if run:
         list_to_trade = []
         for i in watchlist():
@@ -138,7 +138,7 @@ def active():
     req1, req2, req3 = st.columns(3)
     start = req1.date_input("Start", value=pd.to_datetime("2021-07-01"), key="1")
     end = req2.date_input("End", key="2")
-    ticker = req3.text_input("股號", value="GME")
+    ticker = req3.text_input("股號", value="MRNA")
     run = st.button("OK")
     if run:
         kbar_plot(ticker, start=start, end=end)
