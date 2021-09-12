@@ -4,8 +4,9 @@ import yfinance as yf
 import mplfinance as mpf
 import matplotlib.pyplot as plt
 import requests
+from bs4 import BeautifulSoup
 
-st.set_option("deprecation.showPyplotGlobalUse", False)  # pyplot那邊很囉嗦
+st.set_option("deprecation.showPyplotGlobalUse", False)
 
 
 def kbar_plot(ticker, start=None, end=None, period=None):
@@ -25,64 +26,56 @@ def rebase(sids, start=None, end=None):
     return ((1 + df.pct_change()).cumprod() - 1).fillna(0.0)
 
 
-def watchlist_us():
+def screener_tickers():
+    urls = [
+        (
+            "https://finance.yahoo.com/screener/predefined/undervalued_growth_stocks?offset=0&count=100"
+        ),
+        (
+            "https://finance.yahoo.com/screener/predefined/growth_technology_stocks?offset=0&count=100"
+        ),
+        (
+            "https://finance.yahoo.com/screener/predefined/day_gainers?offset=0&count=100"
+        ),
+        (
+            "https://finance.yahoo.com/screener/predefined/most_actives?offset=0&count=100"
+        ),
+        (
+            "https://finance.yahoo.com/screener/predefined/undervalued_large_caps?offset=0&count=100"
+        ),
+        (
+            "https://finance.yahoo.com/screener/predefined/aggressive_small_caps?offset=0&count=100"
+        ),
+        (
+            "https://finance.yahoo.com/screener/predefined/small_cap_gainers?offset=0&count=100"
+        ),
+    ]
+
+    screener_list = []
+    for url in urls:
+        soup = BeautifulSoup(requests.get(url).content)
+        res = soup.find_all("a", {"class": "Fw(600) C($linkColor)"})
+        data = [res[i].string for i in range(len(res))]
+        screener_list += data
+
+    return list(set(screener_list))
+
+
+def watchlist():
     web = requests.get(
         "https://www.slickcharts.com/sp500",
         headers={
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36"
         },
     ).text
-    sid1 = pd.read_html(web)[0]["Symbol"].apply(lambda x: x.replace(".", "-")).to_list()
+    sp500 = (
+        pd.read_html(web)[0]["Symbol"].apply(lambda x: x.replace(".", "-")).to_list()
+    )
     ark = pd.read_html("https://cathiesark.com/ark-funds-combined/complete-holdings")[
         0
     ]["Ticker"][1:31].to_list()
-    my_watchlist = [
-        "AMEH",
-        "APLS",
-        "APPS",
-        "BILI",
-        "CDLX",
-        "DXCM",
-        "ENPH",
-        "LEN",
-        "MRNA",
-        "NET",
-        "NIO",
-        "NVTA",
-        "NXST",
-        "PENN",
-        "PLUG",
-        "QDEL",
-        "SHOP",
-        "SNAP",
-        "THO",
-        "TSLA",
-        "ZM",
-        "ZS",
-        # mkt cap < 5B
-        "AVID",
-        "BGFV",
-        "ATTO",
-        "ASPN",
-        "CLNE",
-        "DAC",
-        "ESTE",
-        "FLGT",
-        "GRWG",
-        "HIMX",
-        "MARA",
-        "NTP",
-        "SBOW",
-        "SPWR",
-        "SCR",
-        "SLCA",
-        "TCS",
-        "TGI",
-        "TIGR",
-    ]
-
-    watchlist_us = list(set(sid1 + ark + my_watchlist))
-    return watchlist_us
+    res = list(set(sp500 + ark + screener_tickers()))
+    return res
 
 
 def active():
@@ -106,7 +99,7 @@ def active():
     run = st.button("開始選股(需要8~10分鐘)")
     if run:
         list_to_trade = []
-        for i in watchlist_us():
+        for i in watchlist():
             df = yf.Ticker(i).history(period="2mo").iloc[:, :5]
             cond1 = (df["Close"] * 1.03 > df["High"].rolling(22).max())[-1]
             cond2 = (
@@ -142,7 +135,7 @@ def active():
     )
     st.header("我有自己想看的")
     req1, req2, req3 = st.columns(3)
-    start = req1.date_input("Start", value=pd.to_datetime("2021-04-01"), key="1")
+    start = req1.date_input("Start", value=pd.to_datetime("2021-07-01"), key="1")
     end = req2.date_input("End", key="2")
     ticker = req3.text_input("股號", value="GME")
     run = st.button("OK")
@@ -217,27 +210,26 @@ def active():
     st.markdown(
         "------------------------------------------------------------------------------------"
     )
-    st.header("前16大權值股，挑幾檔順眼的來比一比")
+    st.header("市值前15大權值股，挑幾檔順眼的來比一比")
     col1, col2 = st.columns(2)
     start = col1.date_input("Start", value=pd.to_datetime("2021-01-01"), key="5")
     end = col2.date_input("End", key="6")
     blue_chips = [
         "AAPL",
         "MSFT",
-        "AMZN",
         "GOOG",
+        "AMZN",
         "FB",
         "TSLA",
-        "TSM",
-        "BABA",
+        "NVDA",
         "V",
         "JPM",
         "JNJ",
         "WMT",
-        "MA",
-        "NVDA",
         "UNH",
-        "BA",
+        "HD",
+        "PG",
+        "MA",
     ]
     weighted = st.multiselect("", blue_chips, default=["GOOG", "FB", "AAPL", "TSLA"])
     show = st.button("先挑這些", key="7")
