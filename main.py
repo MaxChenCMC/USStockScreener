@@ -1,5 +1,5 @@
 import streamlit as st
-import landing_page, tw_stock, tw_stock_bt, after_market  # , us_stock   , us_stock_bt
+import landing_page, tw_stock, tw_stock_bt, after_market, us_stock, us_stock_bt
 import pandas as pd
 import numpy as np
 from FinMind.data import DataLoader
@@ -31,6 +31,8 @@ choice = st.sidebar.selectbox(
         "TW Stock",
         "TW Stock Backtest",
         "After Market Disclosure",
+        "US Stock",
+        "US Stock Backtest",
     ],
     index=0,
 )
@@ -47,3 +49,9 @@ elif choice == "TW Stock Backtest":
 
 elif choice == "After Market Disclosure":
     after_market.active()
+    
+elif choice == "US Stock":
+    us_stock.active()
+
+elif choice == "US Stock Backtest":
+    us_stock_bt.active()
