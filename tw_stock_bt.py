@@ -5,9 +5,7 @@ from FinMind.data import DataLoader
 import matplotlib.pyplot as plt
 
 plt.style.use("bmh")
-
-
-st.set_option("deprecation.showPyplotGlobalUse", False)  # pyplot那邊很囉嗦
+st.set_option("deprecation.showPyplotGlobalUse", False)
 
 
 def crazy_dog_backtest(
