@@ -4,9 +4,7 @@ from FinMind.data import DataLoader
 import mplfinance as mpf
 import matplotlib.pyplot as plt
 
-# import lxml
-
-st.set_option("deprecation.showPyplotGlobalUse", False)  # pyplot那邊很囉嗦
+st.set_option("deprecation.showPyplotGlobalUse", False)
 
 
 def kbar_plot(i=None, start=None, end=None, plot=False):
@@ -98,7 +96,7 @@ def active():
     )
 
     criteria = st.multiselect(
-        "最多4個", ["即將創近月新高", "長紅K棒", "爆量", "最近剛黃金交叉"], default=["長紅K棒", "爆量"]
+        "最多4個", ["即將創近月新高", "長紅K棒", "爆量", "最近剛黃金交叉"], default=["即將創近月新高", "長紅K棒", "爆量"]
     )
     run = st.button("開始選股(需要20秒)")
     if run:
@@ -126,7 +124,8 @@ def active():
                 cond3 = (df["volume"] > df["volume"].rolling(5).mean() * 1.5)[-1]
                 duo_ma = df["close"].rolling(5).mean() >= df["close"].rolling(10).mean()
                 cond4 = (
-                    (duo_ma == True) & ((duo_ma != duo_ma.shift()).rolling(5).sum() == 1)
+                    (duo_ma == True)
+                    & ((duo_ma != duo_ma.shift()).rolling(5).sum() == 1)
                 )[-1]
                 criteria_ = []
                 if "即將創近月新高" in criteria:
