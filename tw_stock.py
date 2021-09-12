@@ -109,8 +109,8 @@ def active():
             "https://fubon-ebrokerdj.fbs.com.tw/z/zg/zg_A_1_1.djhtm"
         )[2][1][2:]
         top100 = []
-        for i in rank_tse:
-            top100.append(i[:4])
+#         for i in rank_tse:
+#             top100.append(i[:4])
         for i in rank_otc:
             top100.append(i[:4])
 
