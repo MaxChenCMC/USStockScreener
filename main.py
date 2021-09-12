@@ -8,9 +8,9 @@ import requests, time, lxml  # lxml在本地端不用，但佈屬streamlit雲端
 import matplotlib.pyplot as plt
 from io import StringIO
 from bs4 import BeautifulSoup
-#  
+#  page_icon="💯"
 st.set_page_config(
-    page_icon="💯", page_title="Max選股", layout="centered", initial_sidebar_state="auto"
+    page_title="Max選股", layout="centered", initial_sidebar_state="auto"
 )
 
 st.markdown(
