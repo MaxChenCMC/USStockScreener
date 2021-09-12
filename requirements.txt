@@ -5,7 +5,7 @@ yfinance==0.1.62
 lxml==4.6.3
 requests==2.23.0
 pandas==1.1.5
-streamlit==0.82.0
+streamlit==0.88.0
 beautifulsoup4==4.9.3
 FinMind==1.4.3
 pip==21.2.4
