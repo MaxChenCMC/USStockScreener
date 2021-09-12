@@ -140,7 +140,7 @@ def active():
     )
     st.markdown(
         """
-    ## 瘋狗選股法回測成交值前350大的股票
+    ## 瘋狗選股法回測成交值前100大的股票
     僅列出`平均每次獲利10%以上`、`交易記錄10筆以上`、`股價10~500塊`的結果
 
     右上角「RUNNING...」動畫跑完才算結束
@@ -153,7 +153,7 @@ def active():
     if criteria_:
         df = pd.read_html("https://histock.tw/stock/rank.aspx?p=all")[0]
         sids = df.sort_values("成交值(億)▼", ascending=False)["代號▼"].to_list()
-        sids = [i for i in sids if len(i) == 4][:350]
+        sids = [i for i in sids if len(i) == 4][:100]
         good_enough = []
         for i in sids:
             try:
