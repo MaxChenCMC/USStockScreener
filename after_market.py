@@ -10,7 +10,7 @@ last_update = pd.read_html("https://www.taifex.com.tw/cht/3/futContractsDate")[2
     0, 0
 ][-10:]
 date_format = pd.date_range(
-    end=pd.to_datetime(last_update), periods=5 + market_closed, freq="B"
+    end=pd.to_datetime(last_update), periods=5 + market_closed + 2, freq="B"
 )
 date_df = date_format.strftime("%Y-%m-%d")
 date_tse = date_format.strftime("%Y%m%d")
